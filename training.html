@@ -170,26 +170,20 @@ function makeBadge(status){
 }
 
 function renderForMonth(selectedKey){
-  var months3 = get3MonthsEndingAt(selectedKey);
-
   // KPI 1: unique drivers active in the selected month
   var selData = ALL_DATA.filter(function(r){ return r.monthKey===selectedKey; });
   var uniqueDrivers = {};
   selData.forEach(function(r){ uniqueDrivers[r.driver]=1; });
   var totalDrivers = Object.keys(uniqueDrivers).length;
 
-  // KPI 2: 3-month completion % (selected month back 3)
-  var data3 = ALL_DATA.filter(function(r){ return months3.indexOf(r.monthKey)>=0; });
-  var totalCourses = data3.length;
-  var completedCourses = data3.filter(function(r){ return r.status==='Complete'; }).length;
+  // KPI 2: completion % for the selected (current) month only
+  var totalCourses = selData.length;
+  var completedCourses = selData.filter(function(r){ return r.status==='Complete'; }).length;
 
   document.getElementById('kDrivers').textContent = totalDrivers;
   document.getElementById('kPct').textContent = formatPct(completedCourses, totalCourses);
 
-  var rangeLabel = months3.length > 1
-    ? formatMonthKey(months3[0]) + ' – ' + formatMonthKey(months3[months3.length-1])
-    : formatMonthKey(months3[0]);
-  document.getElementById('kPctSub').innerHTML = '<b>3-month avg</b>: ' + rangeLabel;
+  document.getElementById('kPctSub').innerHTML = '<b>' + formatMonthKey(selectedKey) + '</b>';
 
   // Table title & month label
   document.getElementById('tableTitle').textContent = formatMonthKey(selectedKey) + ' — Driver Training';
